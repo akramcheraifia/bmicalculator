@@ -13,6 +13,6 @@ This project is a starting point for a Flutter application.
 
 ScreenShots:
  Main screen:
-![S1](https://imgur.com/a/nscNYio)
+![Screenshot 1](flutter_01.png)
  Result screen:
-![S2](https://imgur.com/a/f20K9T7)
+![Screenshot 2](flutter_02.png)
