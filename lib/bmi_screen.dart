@@ -1,3 +1,6 @@
+import 'dart:math';
+
+import 'package:bmicalculator/result_screen.dart';
 import 'package:flutter/material.dart';
 
 class BmiScreen extends StatefulWidget {
@@ -8,9 +11,9 @@ class BmiScreen extends StatefulWidget {
 }
 
 class _BmiScreenState extends State<BmiScreen> {
-  int agecounter = 0;
-  int weightcounter = 0;
-  double _height = 0;
+  int agecounter = 18;
+  int weightcounter = 40;
+  double _height = 150;
   bool isMale = true;
 
   @override
@@ -20,7 +23,7 @@ class _BmiScreenState extends State<BmiScreen> {
       appBar: AppBar(
         shadowColor: Colors.transparent,
         backgroundColor: const Color.fromARGB(255, 12, 15, 31),
-        title: const Center(child: Text('Yahia cheraifia')),
+        title: const Center(child: Text('BMI CALCULATOR')),
       ),
       body: Column(
         children: [
@@ -29,35 +32,36 @@ class _BmiScreenState extends State<BmiScreen> {
             child: Row(
               children: [
                 Expanded(
-                  child: Container(
-                    width: 100,
-                    clipBehavior: Clip.antiAliasWithSaveLayer,
-                    height: 200,
-                    decoration: const BoxDecoration(
-                      color: Color.fromARGB(255, 27, 26, 46),
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        IconButton(
-                          iconSize: 100,
-                          onPressed: () {
-                            setState(() {});
-                          },
-                          icon: const Icon(
+                  child: GestureDetector(
+                    onTap: () => setState(() => isMale = true),
+                    child: Container(
+                      width: 100,
+                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                      height: 200,
+                      decoration: BoxDecoration(
+                        color: isMale
+                            ? Colors.pink
+                            : const Color.fromARGB(255, 27, 26, 46),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(10)),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          Icon(
                             Icons.male,
                             color: Colors.white,
+                            size: 100,
                           ),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        const Text(
-                          'MALE',
-                          style: TextStyle(color: Colors.grey),
-                        ),
-                      ],
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Text(
+                            'MALE',
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -65,33 +69,33 @@ class _BmiScreenState extends State<BmiScreen> {
                   width: 30,
                 ),
                 Expanded(
-                  child: Container(
-                    clipBehavior: Clip.antiAliasWithSaveLayer,
-                    width: 100,
-                    height: 200,
-                    decoration: const BoxDecoration(
-                      color: Color.fromARGB(255, 27, 26, 46),
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        IconButton(
-                          iconSize: 100,
-                          onPressed: () {
-                            setState(() {});
-                          },
-                          icon: const Icon(
+                  child: GestureDetector(
+                    onTap: () => setState(() => isMale = false),
+                    child: Container(
+                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                      width: 100,
+                      height: 200,
+                      decoration: BoxDecoration(
+                        color: isMale
+                            ? const Color.fromARGB(255, 27, 26, 46)
+                            : Colors.pink,
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(10)),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          Icon(
                             Icons.female,
                             color: Colors.white,
+                            size: 100,
                           ),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        const Text('FEMALE',
-                            style: TextStyle(color: Colors.grey)),
-                      ],
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Text('FEMALE', style: TextStyle(color: Colors.grey)),
+                        ],
+                      ),
                     ),
                   ),
                 )
@@ -136,7 +140,7 @@ class _BmiScreenState extends State<BmiScreen> {
                     const SizedBox(
                       height: 10,
                     ),
-                    Slider.adaptive(
+                    Slider(
                       thumbColor: Colors.pink,
                       value: _height,
                       onChanged: (newValue) {
@@ -144,8 +148,8 @@ class _BmiScreenState extends State<BmiScreen> {
                           _height = newValue;
                         });
                       },
-                      min: 0,
-                      max: 250,
+                      min: 80,
+                      max: 220,
                       activeColor: Colors.white,
                       inactiveColor: Colors.grey,
                     ),
@@ -304,30 +308,17 @@ class _BmiScreenState extends State<BmiScreen> {
           ),
           MaterialButton(
             onPressed: () {
-              double result = weightcounter / (_height * _height) * 10000;
-
-              showDialog(
-                  context: context,
-                  builder: (BuildContext context) => AlertDialog(
-                        title: const Text('Result:'),
-                        content: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Your BMI is:${result.toStringAsFixed(1)}'),
-                            Text('Age: $agecounter'),
-                            Text('Weight: $weightcounter'),
-                            Text('Height: ${_height.toStringAsFixed(0)}'),
-                          ],
-                        ),
-                        actions: [
-                          MaterialButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: const Text('OK'),
-                          )
-                        ],
-                      ));
+              double result = weightcounter / pow(_height.round() / 100, 2);
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ResultScreen(
+                            result: result,
+                            age: agecounter,
+                            isMale: isMale,
+                            height: _height,
+                            weight: weightcounter,
+                          )));
             },
             color: Colors.pink,
             minWidth: double.infinity,
